@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using WebApiApp.Model;
 //docker run -d  --rm --name mongo -p 27017:27017 -v mongodbdata:/data/db mongo
 namespace WebApiApp.Repository
@@ -32,7 +33,7 @@ namespace WebApiApp.Repository
 
         public IEnumerable<Item> GetItems()
         {
-            throw new NotImplementedException();
+            return itemscollection.Find(new BsonDocument()).ToList();
         }
 
         public void UpdateItem(Item item)

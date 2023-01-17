@@ -1,4 +1,8 @@
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
 using WebApiApp.Repository;
+using WebApiApp.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +13,14 @@ builder.Services.AddSingleton<ICatalogItem,CatalogItem>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+BsonSerializer.RegisterSerializer(new GuidSerializer(MongoDB.Bson.BsonType.String));
+BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(MongoDB.Bson.BsonType.String));
+builder.Services.AddSingleton<IMongoClient>(ServiceProvider =>
+{
+
+    var settings  =builder.Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
+        return new MongoClient(settings.ConnectionString);
+});
 
 var app = builder.Build();
 
